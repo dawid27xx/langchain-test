@@ -1,6 +1,12 @@
+"""
+
+This is the main function.
+It defines the model, the tools available to the agent, and handles input/output
+
+"""
+
 from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
-
 import os
 from dotenv import load_dotenv  
 load_dotenv()
@@ -12,7 +18,7 @@ get_weather = tools.get_weather
 search_documents = tools.search_documents
 get_full_document = tools.get_full_document
 
-# define mode
+# define model
 # https://reference.langchain.com/python/integrations/langchain_openai/ChatOpenAI/?_gl=1*1c0k3xw*_gcl_au*NTc0OTgxNTExLjE3NjQ3NjAwNDk.*_ga*MTE5ODEzOTcyNS4xNzY0NzYwMDQ5*_ga_47WX3HKKY2*czE3NjQ3NjAwNDkkbzEkZzEkdDE3NjQ3NjEyNTYkajYwJGwwJGgw#langchain_openai.chat_models.ChatOpenAI
 model = ChatOpenAI(
     model="gpt-4o",

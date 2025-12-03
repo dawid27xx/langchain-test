@@ -1,3 +1,9 @@
+"""
+This file is responsible for defining the tools available for the agent.
+These are functions that the agent can call and the agent 
+will automatically pass the required parameters (if applicable)
+"""
+
 from langchain.tools import tool, ToolRuntime
 from langchain.agents.middleware import wrap_tool_call
 from langchain.messages import ToolMessage
@@ -11,23 +17,6 @@ from vector import vector_store
 def get_weather(city: str) -> str:
     """Get weather for a given city."""
     return f"It's always sunny in {city}!"
-
-
-# runtime defines the context window for a function
-# ToolRuntime is the entire context inluding: state, context, store, streaming, config, and tool call ID.
-@tool
-def summarize_conversation(
-    runtime: ToolRuntime
-) -> str:
-    """Summarize the conversation so far."""
-    messages = runtime.state["messages"]
-
-    human_msgs = sum(1 for m in messages if m.__class__.__name__ == "HumanMessage")
-    ai_msgs = sum(1 for m in messages if m.__class__.__name__ == "AIMessage")
-    tool_msgs = sum(1 for m in messages if m.__class__.__name__ == "ToolMessage")
-
-    return f"Conversation has {human_msgs} user messages, {ai_msgs} AI responses, and {tool_msgs} tool results"
-
 
 # tool error handlings
 @wrap_tool_call
@@ -68,3 +57,18 @@ def get_full_document(doc_id: str) -> str:
         f"Date: {doc['date']}\n"
         f"Content:\n{doc['content']}"
     )
+    
+# runtime defines the context window for a function
+# ToolRuntime is the entire context inluding: state, context, store, streaming, config, and tool call ID.
+@tool
+def summarize_conversation(
+    runtime: ToolRuntime
+) -> str:
+    """Summarize the conversation so far."""
+    messages = runtime.state["messages"]
+
+    human_msgs = sum(1 for m in messages if m.__class__.__name__ == "HumanMessage")
+    ai_msgs = sum(1 for m in messages if m.__class__.__name__ == "AIMessage")
+    tool_msgs = sum(1 for m in messages if m.__class__.__name__ == "ToolMessage")
+
+    return f"Conversation has {human_msgs} user messages, {ai_msgs} AI responses, and {tool_msgs} tool results"

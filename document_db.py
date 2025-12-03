@@ -1,3 +1,10 @@
+"""
+
+This is a fake 'DB'. It defines a function for a lookup. This will
+be essentially the whole document lookup process, but using our blob storage.
+
+"""
+
 import json
 
 DB_FILE = "documents.json"
