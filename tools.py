@@ -2,6 +2,7 @@ from langchain.tools import tool, ToolRuntime
 from langchain.agents.middleware import wrap_tool_call
 from langchain.messages import ToolMessage
 from langchain.tools import tool
+from document_db import get_document_by_id
 from vector import vector_store  
 
 # define tool
@@ -44,8 +45,26 @@ def handle_tool_errors(request, handler):
 # document lookup
 @tool
 def search_documents(query: str) -> str:
-    """Search the knowledge base for relevant information."""
+    """Search the knowledge base for relevant information and return document IDs and metadata."""
     results = vector_store.similarity_search(query, k=3)
     if not results:
         return "No relevant information found."
-    return "\n\n".join([r.page_content for r in results])
+    return "\n\n".join([
+        f"ID: {r.metadata['id']}\nTitle: {r.metadata.get('title', '')}\nSource: {r.metadata.get('source', '')}\nDate: {r.metadata.get('date', '')}\nContent: {r.page_content}"
+        for r in results
+    ])
+    
+    
+@tool
+def get_full_document(doc_id: str) -> str:
+    """Retrieve the full document content and metadata by its ID."""
+    doc = get_document_by_id(doc_id)
+    if not doc:
+        return f"No document found with ID: {doc_id}"
+    return (
+        f"ID: {doc['id']}\n"
+        f"Title: {doc['title']}\n"
+        f"Source: {doc['source']}\n"
+        f"Date: {doc['date']}\n"
+        f"Content:\n{doc['content']}"
+    )

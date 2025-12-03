@@ -1,0 +1,21 @@
+User:
+What is happening in Algeria right now? After can you return the entire document we have on Algeria.
+
+Agent: 
+Currently, Algeria is experiencing a civil war, and its economy has crashed. Additionally, there is a global supply issue with avocados, which is linked to the situation in Algeria.
+
+Here is the full document we have on Algeria:
+
+**Title:** Algeria  
+**Date:** 2025-12-03  
+**Content:**  
+- Algeria is currently going through a civil war.
+- The economy has crashed.
+- Global supply of avocados has crashed.
+
+Analysis:
+The agent first replied in natural language summarising the document on algeria. 
+Then, the agent, as requested, showed the full document including its metadata and pasted
+in in the chat. This was done using the get_document_by_id function. The agent sourced the id itself
+as described in the similarity search function. It then used the output of that function, to get the 
+id and hence the full document. 
