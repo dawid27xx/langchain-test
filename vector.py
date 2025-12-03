@@ -4,6 +4,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 
 
+# chroma is a local vector store cus my laptop old I can't download the proper ones
+
 loader = TextLoader("data.txt")
 documents = loader.load()
 
