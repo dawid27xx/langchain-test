@@ -1,0 +1,72 @@
+Chroma is a vector DB 
+
+It can be run in a few ways:
+- Ephemeral: in-memory
+- Persistent Client: saves data to a text file, which is then loaded
+- Client-Server: you run a chroma server to which you connect and use via API (can be async)
+- Cloud: you can run the chroma instance in Cloud
+We will likely use one of the last two
+
+Abstractions:
+- Collections: essentially a table, a fundamental unit of storage
+- Database: a set of Collections
+- Tenants: a user/group/team, it provides complete isolation, not data is shared between Tenants
+
+Telemetry:
+Chroma sends out anonymous 'telemetry' so that Chroma can find bugs, etc. 
+We will likely have to disable this. 
+E.g, client = chromadb.Client(Settings(anonymized_telemetry=False))
+
+Embeddings:
+The chroma library provides embeddings for models such as OpenAI. We can get the embedding from either
+chroma or from langchain. When adding documents, you first create a collection with a certain embedding.
+After then, you just add documents normally with an ID and some metadata (a json object). You can 
+add multiple documents at a time.
+
+Documents:
+One of the biggest limitations is when we get a PDF, we will have to extract the text from it and then add it.
+However, langchain can help here using its pdf loader and splitter. Images can be a little more difficult, but
+potentially we can omit this for POC. For images, we could store in the vector db a caption, and the image id,
+which then can be queried in our blob db and return the image if needed.
+
+Connecting a chroma server and langchain:
+docs: https://docs.langchain.com/oss/python/integrations/vectorstores/chroma
+
+# imports
+import chromadb
+from chromadb.config import Settings
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+
+# Make a Chroma HTTP client pointing to your server
+chroma_client = chromadb.HttpClient(
+    host="your-chroma-host",    # e.g. "localhost" or "chroma.my-domain.com"
+    port=8000,
+    ssl=False,                  # True if using https
+    settings=Settings(
+        tenant="default_tenant",      # or your tenant for Cloud
+        database="default_database",  # or your database name
+    ),
+)
+
+embeddings = OpenAIEmbeddings()
+
+# 2. Wrap that client in LangChain's Chroma vector store
+vectorstore = Chroma(
+    client=chroma_client,
+    collection_name="my_collection",
+    embedding_function=embeddings,
+)
+
+Retrievers:
+
+You can have multiple retrievers sitting on top the same chroma vector db. These can filter through the 
+db using some metadata field. This can be useful if for example we have a legislation filter. And then 
+when the user searches for legislation data, that retriever would be invoked.
+
+Verdict:
+
+We can defo use Chroma for our POC, it works well with langchain, python and our use case. We can 
+run it separately either in cloud, or just as a server locally on our machines. It provides the functionality
+we need. We may need to fiddle about with PDFs and images, but it will do the job.
+
